@@ -63,12 +63,43 @@ function ProblemDetail() {
     }
   };
 
+  // Toggle starred/bookmark
+  const toggleStar = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `http://localhost:5000/api/problems/${id}`,
+        { starred: !problem.starred },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProblem({ ...problem, starred: !problem.starred });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update starred status");
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div style={{ maxWidth: 800, margin: "50px auto" }}>
-      <h2>{problem.title}</h2>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h2>{problem.title}</h2>
+        <button
+          onClick={toggleStar}
+          style={{
+            fontSize: 24,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: problem.starred ? "gold" : "#ccc",
+          }}
+          title={problem.starred ? "Unstar this problem" : "Star this problem"}
+        >
+          ★
+        </button>
+      </div>
 
       {problem.createdAt && (
         <p style={{ color: "#555" }}>

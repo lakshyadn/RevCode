@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function ApproachCard({ approach, index, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editApproach, setEditApproach] = useState({ ...approach });
+  const [collapsed, setCollapsed] = useState(true); // New: collapse toggle
 
   const handleChange = (field, value) => {
     setEditApproach({ ...editApproach, [field]: value });
@@ -11,6 +12,12 @@ function ApproachCard({ approach, index, onUpdate, onDelete }) {
   const saveEdit = () => {
     onUpdate(index, editApproach);
     setIsEditing(false);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(approach.codeText)
+      .then(() => alert("Code copied to clipboard!"))
+      .catch(() => alert("Failed to copy code."));
   };
 
   return (
@@ -40,19 +47,33 @@ function ApproachCard({ approach, index, onUpdate, onDelete }) {
         </div>
       ) : (
         <div>
-          <h4>{approach.approachName}</h4>
-          <pre
-            style={{
-              background: "#f5f5f5",
-              padding: 10,
-              overflowX: "auto",
-            }}
-          >
-            {approach.codeText}
-          </pre>
-          <p>{approach.explanation}</p>
-          <button onClick={() => setIsEditing(true)} style={{ marginRight: 5 }}>Edit</button>
-          <button onClick={() => onDelete(index)}>Delete</button>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h4 style={{ margin: 0 }}>{approach.approachName}</h4>
+            <div>
+              <button onClick={() => setCollapsed(!collapsed)} style={{ marginRight: 5 }}>
+                {collapsed ? "Expand" : "Collapse"}
+              </button>
+              <button onClick={copyToClipboard} style={{ marginRight: 5 }}>Copy Code</button>
+              <button onClick={() => setIsEditing(true)} style={{ marginRight: 5 }}>Edit</button>
+              <button onClick={() => onDelete(index)}>Delete</button>
+            </div>
+          </div>
+
+          {!collapsed && (
+            <>
+              <pre
+                style={{
+                  background: "#f5f5f5",
+                  padding: 10,
+                  overflowX: "auto",
+                  marginTop: 10,
+                }}
+              >
+                {approach.codeText}
+              </pre>
+              <p>{approach.explanation}</p>
+            </>
+          )}
         </div>
       )}
     </div>
