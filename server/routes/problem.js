@@ -36,6 +36,19 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Get single problem by ID
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const problem = await Problem.findOne({ _id: req.params.id, user: req.userId });
+    if (!problem) return res.status(404).json({ message: 'Problem not found' });
+    res.json(problem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 // Update a problem
 router.put('/:id', auth, async (req, res) => {
   try {
