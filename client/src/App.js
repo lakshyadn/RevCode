@@ -11,18 +11,18 @@ function App() {
   return (
     <Router>
       <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-problem" element={<AddProblem />} />
-          <Route path="/problems" element={<ProblemList />} />
-          <Route path="/problems/:id" element={<ProblemDetail />} />
-</Routes>
-
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/add-problem" element={<AddProblem />} />
+        <Route path="/problems" element={<ProblemList />} />
+        {/* ✅ Topic route before id route */}
+        <Route path="/problems/topic/:topic" element={<ProblemList />} />
+        <Route path="/problems/:id" element={<ProblemDetail />} />
+      </Routes>
     </Router>
   );
 }
-
 
 export default App;

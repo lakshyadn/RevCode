@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"; // ✅ import Link
 import axios from "axios";
 import ApproachCard from "../components/ApproachCard";
 
@@ -40,13 +40,26 @@ function ProblemDetail() {
         </a>
       </p>
 
-      {/* ✅ Show Topics */}
+      {/* ✅ Show clickable topics */}
       {problem.topics && problem.topics.length > 0 && (
         <div style={{ marginTop: 20 }}>
           <strong>Topics:</strong>{" "}
           {problem.topics.map((topic, idx) => (
-            <span key={idx} style={{ marginRight: 8, padding: "3px 8px", background: "#f0f0f0", borderRadius: "5px" }}>
-              {topic}
+            <span
+              key={idx}
+              style={{
+                marginRight: 8,
+                padding: "3px 8px",
+                background: "#f0f0f0",
+                borderRadius: "5px",
+              }}
+            >
+              <Link
+                to={`/problems/topic/${topic}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {topic}
+              </Link>
             </span>
           ))}
         </div>
