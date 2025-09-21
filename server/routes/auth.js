@@ -1,3 +1,7 @@
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+
 // routes/auth.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -55,5 +59,40 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// POST /api/auth/google
+router.post('/google', async (req, res) => {
+  try {
+    const { token } = req.body; // ID token from frontend
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, sub: googleId } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+    if (!user) {
+      // Create new user if not exists
+      user = new User({
+        name,
+        email,
+        passwordHash: googleId // store googleId temporarily
+      });
+      await user.save();
+    }
+
+    // Create JWT for your app
+    const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token: jwtToken, user: { id: user._id, name: user.name, email: user.email } });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Google login failed' });
+  }
+});
+
 
 module.exports = router;
