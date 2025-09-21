@@ -77,4 +77,24 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// Partial update a problem (e.g., adding/editing approaches)
+router.patch('/:id', auth, async (req, res) => {
+  try {
+    const problem = await Problem.findOne({ _id: req.params.id, user: req.userId });
+    if (!problem) return res.status(404).json({ message: 'Problem not found' });
+
+    // Only update fields provided in req.body
+    Object.keys(req.body).forEach(key => {
+      problem[key] = req.body[key];
+    });
+
+    await problem.save();
+    res.json(problem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 module.exports = router;

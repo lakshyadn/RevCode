@@ -38,27 +38,29 @@ function AddProblem() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:5000/api/problems",
-        {
-          title,
-          description,
-          platformLink,
-          topics: selectedTopics,
-          code: approaches,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Problem added!");
-      navigate("/problems");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add problem");
-    }
-  };
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem("token");
+    await axios.post(
+      "http://localhost:5000/api/problems",
+      {
+        title,
+        description,
+        platformLink,
+        topics: selectedTopics,
+        code: approaches,
+        createdAt: new Date().toISOString(), // ✅ add current timestamp
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert("Problem added!");
+    navigate("/problems");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add problem");
+  }
+};
+
 
   return (
     <div style={{ maxWidth: 600, margin: "50px auto" }}>
